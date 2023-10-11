@@ -1,11 +1,9 @@
 import React from 'react'
 
 export const AcmeLogo: React.FC = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-pizza" width="44" height="44" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#2c3e50" fill="none" strokeLinecap="round" strokeLinejoin="round">
+  <svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-chef-hat" width="44" height="44" viewBox="0 0 24 24" strokeWidth="1.5" stroke="#597e8d" fill="none" strokeLinecap="round" strokeLinejoin="round">
   <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-  <path d="M12 21.5c-3.04 0 -5.952 -.714 -8.5 -1.983l8.5 -16.517l8.5 16.517a19.09 19.09 0 0 1 -8.5 1.983z" />
-  <path d="M5.38 15.866a14.94 14.94 0 0 0 6.815 1.634a14.944 14.944 0 0 0 6.502 -1.479" />
-  <path d="M13 11.01v-.01" />
-  <path d="M11 14v-.01" />
+  <path d="M12 3c1.918 0 3.52 1.35 3.91 3.151a4 4 0 0 1 2.09 7.723l0 7.126h-12v-7.126a4 4 0 1 1 2.092 -7.723a4 4 0 0 1 3.908 -3.151z" />
+  <path d="M6.161 17.009l11.839 -.009" />
 </svg>
 )

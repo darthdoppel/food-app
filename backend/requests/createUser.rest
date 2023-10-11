@@ -1,9 +1,0 @@
-### Crear un usuario
-POST http://localhost:3000/user/register
-Content-Type: application/json
-
-{
-  "username": "juan",
-  "password": "contraseña123",
-  "email": "juan@example.com"
-}

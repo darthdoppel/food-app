@@ -62,17 +62,17 @@ const NavbarComponent: React.FC = () => {
   ]
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen} isBordered>
+    <Navbar onMenuOpenChange={setIsMenuOpen} isBordered className="py-2 md:py-4">
       <NavbarContent>
         <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="sm:hidden" />
         <NavbarBrand>
           <Link
-            color="foreground"
-            href="/"
-            size="lg"
-            showAnchorIcon
-            anchorIcon={<AcmeLogo />}
-            className='font-bold'
+          color="foreground"
+          href="/"
+          size="lg"
+          showAnchorIcon
+          anchorIcon={<AcmeLogo />}
+          className='font-bold text-xl md:text-2xl'
           >
             BA RESTAURANT GUIDE
           </Link>
@@ -89,52 +89,53 @@ const NavbarComponent: React.FC = () => {
         ))}
       </NavbarContent>
 
-      <NavbarContent className="flex gap-2 md:gap-4 hidden sm:flex" justify="end">
+      <NavbarContent className="flex gap-2 md:gap-4 lg:gap-6 xl:gap-8 items-end hidden sm:flex" justify="end">
         <NavbarItem className="hidden lg:flex">
           <DarkModeSwitch onChange={toggleTheme} checked={theme === 'dark'} />
         </NavbarItem>
         {(user != null)
           ? (
             <>
-              <NavbarItem>
-                <DisplayUser />
-              </NavbarItem>
-              <NavbarItem>
-                <Button color="danger" startContent={<UserIcon />} variant="ghost" onClick={logout}>
-                  Logout
-                </Button>
-              </NavbarItem>
+            <NavbarItem>
+              <DisplayUser />
+            </NavbarItem>
+
+            <NavbarItem>
+              <Button color="danger" startContent={<UserIcon />} variant="ghost" onClick={logout}>
+                Logout
+              </Button>
+            </NavbarItem>
             </>
             )
           : (
-            <>
-              <NavbarItem>
-                <Button
-                  as={Link}
-                  color="primary"
-                  href="#"
-                  variant="flat"
-                  onClick={openLoginModal}
-                  isLoading={loading}
-                >
-                  Login
-                </Button>
-              </NavbarItem>
-              {showLoginModal && <LoginModal onClose={() => { setShowLoginModal(false) }} />}
-              <NavbarItem>
-                <Button
-                  as={Link}
-                  color="primary"
-                  href="#"
-                  variant="flat"
-                  onClick={openModal}
-                  isLoading={loading}
-                >
-                  Sign Up
-                </Button>
-              </NavbarItem>
-              {showModal && <RegisterModal onClose={() => { setShowModal(false) }} />}
-            </>
+          <>
+            <NavbarItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="#"
+                variant="flat"
+                onClick={openLoginModal}
+                isLoading={loading}
+              >
+                Login
+              </Button>
+            </NavbarItem>
+            {showLoginModal && <LoginModal onClose={() => { setShowLoginModal(false) }} />}
+            <NavbarItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="#"
+                variant="flat"
+                onClick={openModal}
+                isLoading={loading}
+              >
+                Sign Up
+              </Button>
+            </NavbarItem>
+            {showModal && <RegisterModal onClose={() => { setShowModal(false) }} />}
+          </>
             )}
       </NavbarContent>
 
@@ -146,46 +147,47 @@ const NavbarComponent: React.FC = () => {
             </Link>
           </NavbarMenuItem>
         ))}
+        {/* Agregar controles de usuario para móviles aquí */}
         {(user != null)
           ? (
-            <>
-              <NavbarMenuItem>
-                <DisplayUser />
-              </NavbarMenuItem>
-              <NavbarMenuItem>
-                <Button color="danger" startContent={<UserIcon />} variant="ghost" onClick={logout}>
-                  Logout
-                </Button>
-              </NavbarMenuItem>
-            </>
+          <>
+            <NavbarMenuItem>
+              <DisplayUser />
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Button color="danger" startContent={<UserIcon />} variant="ghost" onClick={logout}>
+                Logout
+              </Button>
+            </NavbarMenuItem>
+          </>
             )
           : (
-            <>
-              <NavbarMenuItem>
-                <Button
-                  as={Link}
-                  color="primary"
-                  href="#"
-                  variant="flat"
-                  onClick={openLoginModal}
-                  isLoading={loading}
-                >
-                  Login
-                </Button>
-              </NavbarMenuItem>
-              <NavbarMenuItem>
-                <Button
-                  as={Link}
-                  color="primary"
-                  href="#"
-                  variant="flat"
-                  onClick={openModal}
-                  isLoading={loading}
-                >
-                  Sign Up
-                </Button>
-              </NavbarMenuItem>
-            </>
+          <>
+            <NavbarMenuItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="#"
+                variant="flat"
+                onClick={openLoginModal}
+                isLoading={loading}
+              >
+                Login
+              </Button>
+            </NavbarMenuItem>
+            <NavbarMenuItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="#"
+                variant="flat"
+                onClick={openModal}
+                isLoading={loading}
+              >
+                Sign Up
+              </Button>
+            </NavbarMenuItem>
+          </>
             )}
       </NavbarMenu>
     </Navbar>

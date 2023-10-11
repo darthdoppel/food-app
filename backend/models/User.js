@@ -1,46 +1,73 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
-const bcrypt = require('bcryptjs') // Para hash de contraseñas
+import { connection } from '../db.js'
+import bcrypt from 'bcryptjs'
 
-const UserSchema = new Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true // El nombre de usuario debe ser único en la colección
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true // El email debe ser único en la colección
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now // La fecha de creación será la fecha actual por defecto
+export class User {
+  static async find () {
+    try {
+      const [rows] = await connection.execute('SELECT * FROM User')
+      return rows
+    } catch (error) {
+      console.error('Error in find: ', error)
+      throw error
+    }
   }
-})
 
-// Método para hashear la contraseña antes de guardar el usuario
-UserSchema.pre('save', async function (next) {
-  try {
-    if (!this.isModified('password')) return next()
+  static async findById (id) {
+    try {
+      if (id === undefined) {
+        throw new Error('ID is undefined')
+      }
 
-    const salt = await bcrypt.genSalt(10)
-    this.password = await bcrypt.hash(this.password, salt)
-    next()
-  } catch (err) {
-    next(err)
+      const [rows] = await connection.execute(
+        'SELECT * FROM User WHERE id = ?',
+        [id]
+      )
+      return rows[0]
+    } catch (error) {
+      console.error('Error in findById: ', error)
+      throw error
+    }
   }
-})
 
-// Método para comparar contraseñas
-UserSchema.methods.comparePassword = function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password)
+  static async findByUsername (username) {
+    const [rows] = await connection.execute('SELECT * FROM User WHERE username = ?', [username])
+    return rows[0]
+  }
+
+  static async create (data) {
+    const { username, password, email } = data
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const [result] = await connection.execute('INSERT INTO User (username, password, email, createdAt) VALUES (?, ?, ?, NOW())', [username, hashedPassword, email])
+    return { id: result.insertId, ...data }
+  }
+
+  static async comparePassword (candidatePassword, hashedPassword) {
+    return bcrypt.compare(candidatePassword, hashedPassword)
+  }
+
+  static async delete (id) {
+    try {
+      const [result] = await connection.execute(
+        'DELETE FROM User WHERE id = ?',
+        [id]
+      )
+      return result.affectedRows > 0 // Retorna true si se eliminó algún registro.
+    } catch (error) {
+      console.error('Error in delete: ', error)
+      throw error
+    }
+  }
+
+  static async updateAvatar (id, avatarUrl) {
+    try {
+      const [result] = await connection.execute(
+        'UPDATE User SET avatar = ? WHERE id = ?',
+        [avatarUrl, id]
+      )
+      return result.affectedRows > 0 // Si algún registro fue actualizado, retorna true.
+    } catch (error) {
+      console.error('Error in updateAvatar: ', error)
+      throw error
+    }
+  }
 }
-
-const User = mongoose.model('User', UserSchema)
-
-module.exports = User
