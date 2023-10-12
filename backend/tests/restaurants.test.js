@@ -37,13 +37,11 @@ describe('Restaurant API - POST /restaurants', () => {
 
     // Almacenar el ID del restaurante creado para futuras pruebas o limpieza.
     createdRestaurantId = res.body.data.id
-    console.log('Created restaurant with ID:', createdRestaurantId)
   })
 
   // Un hook "after" para limpiar: eliminar el restaurante creado después de que las pruebas hayan terminado.
   after(async () => {
     if (createdRestaurantId && createdRestaurantId !== 0) {
-      console.log(`Attempting to delete restaurant with ID: ${createdRestaurantId}`)
       const res = await request.delete(`/restaurants/${createdRestaurantId}`)
         .set('Authorization', `Bearer ${token}`)
       console.log('Delete response:', res.status, res.body)

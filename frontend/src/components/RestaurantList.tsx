@@ -34,7 +34,6 @@ const RestaurantList: React.FC = () => {
       const token = localStorage.getItem('token')
       const createdRestaurant = await createRestaurant(newRestaurant, token)
       setIsModalOpen(false)
-      console.log('Created restaurant:', createdRestaurant)
 
       // Llama a una función para actualizar los restaurantes desde el servidor.
       void updateRestaurantsFromServer()

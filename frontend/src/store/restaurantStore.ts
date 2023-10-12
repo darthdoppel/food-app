@@ -22,14 +22,12 @@ export const useRestaurantStore = create<RestaurantState>((set) => ({
   addRestaurant: (restaurant) => {
     set((state) => {
       const newRestaurants = [...state.restaurants, restaurant]
-      console.log('New restaurants state:', newRestaurants)
       return { restaurants: newRestaurants }
     })
   },
   setReviews: (fn) => {
     set((state) => {
-      const newReviews = fn(state.reviews)
-      console.log('Updated reviews:', newReviews) // Log new state
+      const newReviews = fn(state.reviews)// Log new state
       return { reviews: newReviews }
     })
   },

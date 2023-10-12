@@ -37,7 +37,6 @@ export class Review {
         'UPDATE Review SET rating = ?, comment = ? WHERE id = ?',
         [rating, comment, id]
       )
-      console.log('SQL Update Result: ', result)
 
       // Retorna true si la actualización fue exitosa
       return result.affectedRows > 0

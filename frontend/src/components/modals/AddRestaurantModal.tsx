@@ -38,7 +38,6 @@ const AddRestaurantModal: React.FC<AddRestaurantModalProps> = ({ isOpen, onOpenC
       }
 
       const response = await onCreateRestaurant(newRestaurant)
-      console.log('Response:', response)
 
       if (response?.data === undefined) {
         throw new Error('Received invalid response from server.')

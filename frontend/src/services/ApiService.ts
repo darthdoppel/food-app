@@ -65,9 +65,6 @@ export async function createReview (
     headers.append('Authorization', `Bearer ${token}`)
   }
 
-  console.log('Sending review:', review)
-  console.log('Using token:', token)
-
   const response = await fetch(`${BASE_URL}/reviews`, {
     method: 'POST',
     headers,
@@ -99,7 +96,6 @@ export async function deleteReview (id: string, token: string | null | undefined
     throw new Error(`HTTP error! Status: ${response.status}`)
   } else {
     const responseData = await response.json()
-    console.log('deleteReview response data:', responseData)
     return responseData
   }
 }
@@ -125,7 +121,6 @@ export async function createRestaurant (
     throw new Error(`HTTP error! Status: ${response.status}`)
   } else {
     const responseData = await response.json()
-    console.log('createRestaurant response data:', responseData)
     return responseData
   }
 }
