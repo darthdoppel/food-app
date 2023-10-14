@@ -1,5 +1,5 @@
 import { useRestaurantStore } from '../store/restaurantStore'
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'https://canberra-lion-fish-zdzz.2.us-1.fl0.io'
 
 export async function fetchWithToken (url: string, token: string | null | undefined) {
   const headers = new Headers()
