@@ -1,6 +1,16 @@
 import { connection } from '../db.js'
 
 export class Review {
+  static async isValidUserId (userId) {
+    const [rows] = await connection.execute('SELECT * FROM User WHERE id = ?', [userId])
+    return rows.length > 0
+  }
+
+  static async isValidRestaurantId (restaurantId) {
+    const [rows] = await connection.execute('SELECT * FROM Restaurant WHERE id = UUID_TO_BIN(?)', [restaurantId])
+    return rows.length > 0
+  }
+
   static async find () {
     const [rows] = await connection.execute('SELECT * FROM Review')
     return rows
@@ -18,6 +28,12 @@ export class Review {
 
   static async create (data) {
     const { userId, restaurantId, rating, comment } = data
+
+    // Validate userId and restaurantId
+    if (!await this.isValidUserId(userId) || !await this.isValidRestaurantId(restaurantId)) {
+      throw new Error('Invalid userId or restaurantId')
+    }
+
     const [result] = await connection.execute('INSERT INTO Review (userId, restaurantId, rating, comment) VALUES (?, UUID_TO_BIN(?), ?, ?)', [userId, restaurantId, rating, comment])
     return { id: result.insertId, ...data }
   }
@@ -29,16 +45,17 @@ export class Review {
 
   static async update (id, updatedData) {
     try {
-      // Desestructuramos los datos a actualizar
-      const { rating, comment } = updatedData
+      const { userId, restaurantId, rating, comment } = updatedData
 
-      // Ejecutamos la consulta de actualización
-      const [result] = await connection.execute(
-        'UPDATE Review SET rating = ?, comment = ? WHERE id = ?',
-        [rating, comment, id]
-      )
+      // Validate userId and restaurantId if they are provided in updatedData
+      if (
+        (userId && !await this.isValidUserId(userId)) ||
+        (restaurantId && !await this.isValidRestaurantId(restaurantId))
+      ) {
+        throw new Error('Invalid userId or restaurantId')
+      }
 
-      // Retorna true si la actualización fue exitosa
+      const [result] = await connection.execute('UPDATE Review SET rating = ?, comment = ? WHERE id = ?', [rating, comment, id])
       return result.affectedRows > 0
     } catch (error) {
       console.error('Error in update: ', error)

@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import StarRating from './StarRating'
-import { Avatar, Divider, useDisclosure, Tooltip } from '@nextui-org/react'
+import { Avatar, Divider, useDisclosure, Tooltip, Spinner } from '@nextui-org/react'
 import useAuthStore from '../store/authStore'
 import { EditIcon } from '../icons/EditIcon'
 import { DeleteIcon } from '../icons/DeleteIcon'
@@ -9,19 +9,21 @@ import DeleteReviewModal from './modals/DeleteReviewModal'
 import { deleteReview } from '../services/ApiService'
 import { toast } from 'sonner'
 
-interface ReviewListProps {
-  reviews: Review[]
-  users: User[]
-  onEditReview: (review: { rating: number, comment: string, id: string }) => void
-}
-
-const ReviewList: React.FC<ReviewListProps> = ({ onEditReview }) => {
-  const user = useAuthStore(state => state.user)
-  const token = useAuthStore(state => state.token) // Asegúrate de tener una forma de obtener el token
+const ReviewList: React.FC<{ onEditReview: (review: Review) => void }> = ({ onEditReview }) => {
+  const isLoading = useRestaurantStore(state => state.isLoading)
   const reviews = useRestaurantStore(state => state.reviews)
   const users = useRestaurantStore(state => state.users)
+  const loadUsers = useRestaurantStore(state => state.loadUsers)
+  const user = useAuthStore(state => state.user)
+  const token = useAuthStore(state => state.token)
   const { isOpen: isDeleteModalOpen, onOpen: onOpenDeleteModal, onOpenChange: onOpenChangeDeleteModal } = useDisclosure()
   const [reviewToDelete, setReviewToDelete] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (token != null) {
+      void loadUsers(reviews, token)
+    }
+  }, [reviews, token, loadUsers])
 
   const handleDeleteReview = async () => {
     if (reviewToDelete != null) {
@@ -46,12 +48,20 @@ const ReviewList: React.FC<ReviewListProps> = ({ onEditReview }) => {
   return (
     <div className="mt-10 px-4">
       <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Reviews</h2>
-      {
-        reviews.length === 0
-          ? <p className="text-gray-700 dark:text-gray-300">No reviews yet.</p>
-          : reviews.map((review) => {
-            const reviewUser = users.find((u) => u.id === review.userId)
-            return (
+      {isLoading
+        ? (
+            <Spinner label="Loading..." color="warning" />
+          )
+        : (
+              <>
+        {reviews.length === 0
+          ? (
+           <p className="text-gray-700 dark:text-gray-300">No reviews yet.</p>
+            )
+          : (
+              reviews.map((review) => {
+                const reviewUser = users.find((u) => u.id === review.userId)
+                return (
               <div key={review.id} className="bg-white dark:bg-gray-800 rounded-md p-4 mb-4 shadow-sm">
                 {reviewUser != null
                   ? (
@@ -92,9 +102,11 @@ const ReviewList: React.FC<ReviewListProps> = ({ onEditReview }) => {
                   onDeleteConfirm={handleDeleteReview}
                 />
               </div>
-            )
-          })
-      }
+                )
+              })
+            )}
+      </>
+          )}
     </div>
   )
 }

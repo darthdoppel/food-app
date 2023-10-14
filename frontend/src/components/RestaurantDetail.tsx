@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { fetchRestaurant, fetchReviews, fetchUser, createReview, updateReview, deleteRestaurant, updateRestaurantImage } from '../services/ApiService'
+import { fetchRestaurant, fetchReviews, fetchUser, handleCreateReviewService, updateReview, deleteRestaurant, updateRestaurantImage } from '../services/ApiService'
 import { Button, useDisclosure, Chip } from '@nextui-org/react'
 import { toast } from 'sonner'
 import useAuthStore from '../store/authStore'
@@ -28,24 +28,6 @@ const RestaurantDetail: React.FC = () => {
   const setUsers = useRestaurantStore((state) => state.setUsers)
 
   const [editingReview, setEditingReview] = useState<{ rating: number, comment: string, id: string } | null>(null)
-
-  const handleEditReview = (review: { rating: number, comment: string, id: string }) => {
-    setEditingReview(review)
-    onEditModalOpen()
-  }
-
-  const handleUpdateReview = async (updatedReview: { rating: number, comment: string, id: string }) => {
-    try {
-      await updateReview(updatedReview, token)
-      const newReviews = reviews.map((r) => r.id === updatedReview.id ? { ...r, ...updatedReview } : r)
-      setReviews(() => newReviews)
-      onEditModalOpenChange()
-      toast.success('Review updated successfully!')
-    } catch (error) {
-      console.error('Failed to update review:', error)
-      toast.error('Failed to update review. Please try again later.')
-    }
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,6 +66,24 @@ const RestaurantDetail: React.FC = () => {
 
   if (restaurant == null) return <p>Loading...</p>
 
+  const handleEditReview = (review: { rating: number, comment: string, id: string }) => {
+    setEditingReview(review)
+    onEditModalOpen()
+  }
+
+  const handleUpdateReview = async (updatedReview: { rating: number, comment: string, id: string }) => {
+    try {
+      await updateReview(updatedReview, token)
+      const newReviews = reviews.map((r) => r.id === updatedReview.id ? { ...r, ...updatedReview } : r)
+      setReviews(() => newReviews)
+      onEditModalOpenChange()
+      toast.success('Review updated successfully!')
+    } catch (error) {
+      console.error('Failed to update review:', error)
+      toast.error('Failed to update review. Please try again later.')
+    }
+  }
+
   const handleCreateReview = async (newReview: { rating: string, comment: string }) => {
     try {
       const ratingNumber = Number(newReview.rating)
@@ -97,39 +97,33 @@ const RestaurantDetail: React.FC = () => {
       const userId = user?.id
 
       // Verificación de existencia
-      if ((restaurantId.length === 0) || ((userId ?? 0) === 0) || (token == null)) {
+      if ((restaurantId.length === 0) || userId === undefined || token == null) {
         toast.error('Missing user, restaurant, or authentication information.')
         return
       }
 
-      if ((userId == null) || (token == null)) {
-        toast.error('You must be logged in to create a review.')
-        return
+      // Si es un nuevo usuario, actualizar `users` primero
+      if (!users.some(u => u.id === userId)) {
+        const newUserResponse = await fetchUser(userId, token) // Asegúrate de que esto es await-ed
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (newUserResponse?.user) {
+          setUsers(prevUsers => [...prevUsers, newUserResponse.user])
+        } else {
+          console.error('Failed to fetch new user data')
+        }
       }
 
-      // Crear la revisión utilizando el servicio ApiService
-      await createReview({
+      const createdReview = await handleCreateReviewService({
         userId,
-        restaurantId,
-        rating: ratingNumber,
+        restaurantId: restaurant?.id,
+        rating: parseFloat(newReview.rating),
         comment: newReview.comment
       }, token)
+      setReviews(prevReviews => [...prevReviews, createdReview])
+      console.log('Created review acaaa:', createdReview)
 
       toast.success('Review created successfully!')
       onOpenChange()
-
-      if (id == null || token == null) {
-        console.error('ID or token is undefined')
-        return
-      }
-
-      if ((user == null) || (token.length === 0)) {
-        toast.error('You must be logged in to create a review.')
-        return
-      }
-
-      const updatedReviews = await fetchReviews(id, token)
-      setReviews(updatedReviews)
     } catch (error) {
       console.error('Failed to create review:', error)
       toast.error('Failed to create review. Please try again later.')
@@ -214,7 +208,7 @@ const RestaurantDetail: React.FC = () => {
               </Chip>
           </div>
 
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 mb-4 mx-4 md:mx-auto justify-center items-center">
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mt-4 mb-4 mx-4 md:mx-0 justify-center md:justify-start md:ml-4 items-center">
   <Button
     onPress={onOpen}
     color="success"
@@ -260,7 +254,7 @@ const RestaurantDetail: React.FC = () => {
           }}
         />
 
-      <ReviewList reviews={reviews} users={users} onEditReview={handleEditReview} />
+    <ReviewList onEditReview={handleEditReview} />
 
       <EditReviewModal
           isOpen={isEditModalOpen}

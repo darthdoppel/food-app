@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Textarea } from '@nextui-org/react'
 import RatingInput from '../RatingInput'
-import { handleCreateReview } from '../../services/ApiService'
+import { handleCreateReviewService } from '../../services/ApiService'
 import useAuthStore from '../../store/authStore'
 import { useRestaurantStore } from '../../store/restaurantStore'
 
@@ -51,7 +51,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ isOpen, onOpenChange })
     }
 
     // Usar handleCreateReview para crear la reseña y actualizar el estado local
-    handleCreateReview(reviewData, token)
+    handleCreateReviewService(reviewData, token)
       .then(() => {
         setNewReview({ rating: '', comment: '' })
         onOpenChange() // Cierra el modal

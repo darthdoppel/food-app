@@ -56,27 +56,25 @@ const NavbarComponent: React.FC = () => {
   }, [])
 
   const menuItems = [
-    { label: 'Restaurants', href: '/' },
-    { label: 'Bares', href: '#', isActive: true },
-    { label: 'Reseñas', href: '#' }
+    { label: 'Restaurants', href: '/', isActive: true }
   ]
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen} isBordered>
       <NavbarContent>
         <NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} className="sm:hidden" />
-        <NavbarBrand>
-          <Link
-            color="foreground"
-            href="/"
-            size="lg"
-            showAnchorIcon
-            anchorIcon={<AcmeLogo />}
-            className='font-bold'
-          >
-            BA RESTAURANT GUIDE
-          </Link>
-        </NavbarBrand>
+        <NavbarBrand className="flex justify-center sm:justify-start">
+    <Link
+        color="foreground"
+        href="/"
+        size="lg"
+        showAnchorIcon
+        anchorIcon={<AcmeLogo />}
+        className='font-bold'
+    >
+        BA RESTAURANT GUIDE
+    </Link>
+</NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">

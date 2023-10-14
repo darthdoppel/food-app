@@ -11,6 +11,7 @@ import {
 import { useTheme } from '../ThemeContext'
 import useAuthStore from '../../store/authStore'
 import { toast } from 'sonner'
+import { registerUser } from '../../services/ApiService'
 
 interface RegisterModalProps {
   onClose: () => void
@@ -25,30 +26,19 @@ const RegisterModal: React.FC<RegisterModalProps> = ({ onClose }) => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3000/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          email
-        })
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
+      const user = {
+        username,
+        email,
+        password
       }
-
-      const data = await response.json()
-      toast.success('User registered successfully!')
+      const data = await registerUser(user)
 
       setUser(data.user)
       setToken(data.token)
       onClose()
     } catch (error) {
-      console.error('Error registering user:', error)
+      // Manejar error. Podrías mostrar un mensaje al usuario aquí
+      toast.error('Failed to register. Please try again later.')
     }
   }
 

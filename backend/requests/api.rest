@@ -43,8 +43,8 @@ POST http://localhost:3000/user/login
 Content-Type: application/json
 
 {
-  "username": "tostada",
-  "password": "tostada"
+  "username": "flerkeno",
+  "password": "flerkeno"
 }
 
 ### DELETE para borrar un usuario
@@ -86,9 +86,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhd
 }
 
 ### Actualizar avatar de usuario
-PATCH http://localhost:3000/user/3/avatar
+PATCH http://localhost:3000/user/2/avatar
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTY5NjQ2NzM1OSwiZXhwIjoxNjk2NDcwOTU5fQ.hk58PGDYyNN2ghR6QHyQ7oWPK5wu18A7usY-nZdDHSw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTY5NzEyMjE2NCwiZXhwIjoxNjk3MTI1NzY0fQ.bkb6rkHqS0174tw-KKl4g3MNbwfE5z2ijB8g8ZI46ys
 
 {
   "avatarUrl": "http://localhost:3000/avatars/tosta.jpeg"

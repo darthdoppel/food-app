@@ -21,7 +21,7 @@ describe('Review API - PATCH /reviews/:id', () => {
   })
 
   it('should update a review', async () => {
-    const reviewId = 3 // Asegúrate de que esta revisión existe y puede ser utilizada para pruebas
+    const reviewId = 43
 
     const updatedReviewData = {
       rating: 4,

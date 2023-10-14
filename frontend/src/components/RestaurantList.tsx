@@ -74,9 +74,14 @@ const RestaurantList: React.FC = () => {
   return (
         <div className="px-4 mx-auto">
             <div className="my-4">
-                <Button color="primary" variant="solid" onClick={() => { setIsModalOpen(true) }}>
-                    Add Restaurant
-                </Button>
+            <Button
+          color="primary"
+          variant="solid"
+          onClick={() => { setIsModalOpen(true) }}
+          className="w-full sm:w-auto" // <-- Clases de Tailwind para ancho completo en móviles y ancho automático en vistas más grandes
+        >
+          Add Restaurant
+        </Button>
                 <AddRestaurantModal
                     isOpen={isModalOpen}
                     onOpenChange={() => { setIsModalOpen(!isModalOpen) }}

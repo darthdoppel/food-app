@@ -17,21 +17,27 @@ export async function fetchWithToken (url: string, token: string | null | undefi
     return await response.json()
   }
 }
-export async function fetchRestaurant (id: string, token: string | null | undefined) {
+
+export async function registerUser (user: { username: string, email: string, password: string }) {
   const headers = new Headers()
   headers.append('Content-Type', 'application/json')
 
-  if (token != null) {
-    headers.append('Authorization', `Bearer ${token}`)
-  }
-
-  const response = await fetch(`${BASE_URL}/restaurants/${id}`, { headers })
+  const response = await fetch(`${BASE_URL}/user/register`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(user)
+  })
 
   if (!response.ok) {
-    throw new Error(`HTTP error! Status: ${response.status}`)
-  } else {
-    return await response.json()
+    const errorData = await response.json()
+    console.error('Error data:', errorData) // Log error data
+    throw new Error(`Error: ${response.status}, ${errorData.message}`)
   }
+  return await response.json()
+}
+
+export async function fetchRestaurant (id: string, token: string | null | undefined) {
+  return await fetchWithToken(`${BASE_URL}/restaurants/${id}`, token)
 }
 
 export async function fetchReviews (id: string, token: string | null | undefined) {
@@ -232,25 +238,47 @@ export async function updateReview (
   return await response.json()
 }
 
-export async function handleCreateReview (
+export async function handleCreateReviewService (
   review: { rating: number, comment: string, userId: number, restaurantId: string },
   token: string | null | undefined
 ) {
   try {
     const newReview = await createReview(review, token)
+    console.log('Created Review:', newReview)
 
-    // Añadir la nueva reseña al estado local para que se muestre en la UI.
+    // Actualizando el estado global directamente aquí
     useRestaurantStore.getState().setReviews((prevReviews) => [...prevReviews, newReview.data])
 
-    // Comprobar si el usuario ya está en el estado local.
-    const userExists = useRestaurantStore.getState().users.some((user) => user.id === review.userId)
-
-    // Si el usuario no está en el estado, obtener los datos del usuario y añadirlos al estado.
-    if (!userExists) {
-      const newUser = await fetchUser(review.userId, token)
-      useRestaurantStore.getState().setUsers((prevUsers) => [...prevUsers, newUser])
-    }
+    return newReview.data
   } catch (error) {
     console.error('Error creating review:', error)
+    throw error
+  }
+}
+
+export async function updateUserAvatar (
+  userId: number,
+  avatarUrl: string,
+  token: string | null | undefined
+) {
+  const headers = new Headers()
+  headers.append('Content-Type', 'application/json')
+
+  if (token != null) {
+    headers.append('Authorization', `Bearer ${token}`)
+  }
+
+  const response = await fetch(`${BASE_URL}/user/${userId}/avatar`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ avatarUrl })
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`)
+  } else {
+    const responseData = await response.json()
+    console.log('updateUserAvatar response data:', responseData)
+    return responseData
   }
 }
