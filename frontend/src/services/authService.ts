@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'https://canberra-lion-fish-zdzz.2.us-1.fl0.io'
 
 export const registerUser = async (username: string, password: string, email: string): Promise<AuthResponse> => {
   const response = await fetch(`${BASE_URL}/user/register`, {
